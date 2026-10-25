@@ -70,7 +70,7 @@ footer{max-width:860px;margin:0 auto;padding:24px 18px 40px;color:var(--mu);font
 <main>
 <section id="ce-este">
 <h2>Ce este prompt engineering?</h2>
-<p>Un <b>prompt</b> este mesajul pe care îl scrii unui AI. <b>Prompt engineering</b> înseamnă să îl formulezi astfel încât AI-ul să înțeleagă cine să fie, ce să facă și cum să-ți răspundă. AI-ul nu îți citește gândurile: răspunde la ce scrii, nu la ce ai vrut să scrii.</p>
+<p>Un <b>prompt</b> este mesajul pe care îl scrii unui AI. <b>Prompt engineering</b> înseamnă să îl formulezi astfel încât AI-ul să înțeleagă cine să fie, ce să facă și cum să-ți răspundă. AI-ul nu îți citește gândurile: răspunde la ceea ce scrii, nu la ceea ce ai vrut să scrii.</p>
 <div class="grid">
 <div class="card"><h3>Context</h3><p>Cu cât știe mai bine situația, cu atât răspunsul e mai potrivit.</p></div>
 <div class="card"><h3>Claritate</h3><p>O sarcină precisă dă un rezultat precis. „Ajută-mă” nu este o sarcină.</p></div>
@@ -81,7 +81,7 @@ footer{max-width:860px;margin:0 auto;padding:24px 18px 40px;color:var(--mu);font
 
 <section id="cadre">
 <h2>Două cadre, ca să începi</h2>
-<p>Alege un cadru, apoi atinge fiecare literă ca să vezi exemplul psihologic.</p>
+<p>Alege un cadru și citește fiecare literă, cu exemplul psihologic alăturat.</p>
 <div class="tabs" role="tablist" aria-label="Cadre">
 <button role="tab" id="t-RTF" aria-selected="true" type="button">RTF · rapid</button>
 <button role="tab" id="t-RISEN" aria-selected="false" type="button">RISEN · detaliat</button>
@@ -151,10 +151,10 @@ footer{max-width:860px;margin:0 auto;padding:24px 18px 40px;color:var(--mu);font
 <h3>1. Checklist de anonimizare</h3>
 <div class="card"><div id="ck"></div><div class="row" style="margin-top:12px"><button type="button" id="ckr">Resetează bifele</button><span class="hint" id="ckp" role="status">0 din 8 bifate.</span></div></div>
 <h3>2. Detector și mascare de date personale</h3>
-<p>Lipește textul și detectorul înlocuiește tiparele evidente (CNP, e-mail, telefon, date, adrese, nume după „domnul”, „clientul” etc.). Nu prinde poveștile recognoscibile, deci recitește mereu manual.</p>
+<p>Lipește textul, iar detectorul înlocuiește tiparele evidente (CNP, e-mail, telefon, date, adrese, nume după „domnul”, „clientul” etc.). Nu prinde poveștile recognoscibile, deci recitește mereu manual.</p>
 <div class="card"><label for="pt">Text de verificat</label><textarea id="pt" style="min-height:120px" placeholder="Lipește descrierea cazului..."></textarea><div class="row" style="margin-top:12px"><button type="button" class="p" id="ps">Scanează și maschează</button><button type="button" id="pc">Copiază textul mascat</button><span class="hint" id="pst" role="status"></span></div><p class="hint" id="pf" style="margin-top:10px"></p><pre id="po" aria-live="polite"></pre></div>
 <details><summary>Limite cunoscute ale instrumentelor</summary>
-<p><b>Detectorul de date</b> nu prinde: nume fieără titlu înainte (le semnalează doar ca posibile, fără să le mascheze), porecle, serii de buletin, numere de dosar, precum și locuri sau evenimente care identifică o persoană prin context. Poate masca și lucruri nevinovate, de exemplu o abreviere precum „S.A.”. Recitește mereu textul.</p>
+<p><b>Detectorul de date</b> nu prinde: nume fără titlu înainte (le semnalează doar ca posibile, fără să le mascheze), porecle, serii de buletin, numere de dosar, precum și locuri sau evenimente care identifică o persoană prin context. Poate masca și lucruri nevinovate, de exemplu o abreviere precum „S.A.”. Recitește mereu textul.</p>
 <p><b>Verificatorul de prompt</b> caută cuvinte-cheie în română. Nu judecă calitatea ideilor, poate rata formulări neobișnuite și nu funcționează pentru alte limbi.</p>
 <p><b>Constructorul, checklistul și quiz-ul</b> nu salvează nimic: dacă reîncărci pagina, începi de la zero.</p>
 <p><b>Niciun instrument de aici</b> nu înlocuiește evaluarea ta profesională, politicile instituției sau legislația privind datele personale.</p></details>
@@ -219,7 +219,7 @@ function upd(){var k=bcur,F=FW[k].f,parts=[],n=0,long=0;
 F.forEach(function(f,i){var v=(vals[k][i]||"").trim();if(v){n++;if(v.length>40)long++;parts.push(f.l.toUpperCase()+":\n"+v)}});
 $("out").textContent=parts.length?parts.join("\n\n"):"Promptul apare aici.";
 var sc=Math.round(((n+long)/(F.length*2))*100);$("mb").style.width=sc+"%";$("mt").setAttribute("aria-valuenow",sc);
-$("mtx").textContent=n===0?"Completează câmpurile ca să vezi scorul.":n<F.length?"Mai lipsesc "+(F.length-n)+" câmpuri. Un prompt complet dă răspunsuri mai bune.":long<F.length?"Toate câmpurile sunt completate. Adaugă detalii în cele scurte.":"Excelent. Promptul este complet și detaliat."}
+$("mtx").textContent=n===0?"Completează câmpurile ca să vezi scorul.":n<F.length?"Mai lipsesc "+(F.length-n)+(F.length-n===1?" câmp":" câmpuri")+". Un prompt complet dă răspunsuri mai bune.":long<F.length?"Toate câmpurile sunt completate. Adaugă detalii în cele scurte.":"Excelent. Promptul este complet și detaliat."}
 $("t-RTF").onclick=function(){setTab("t","RTF",renderFW)};$("t-RISEN").onclick=function(){setTab("t","RISEN",renderFW)};
 $("b-RTF").onclick=function(){setTab("b","RTF",function(k){bcur=k;renderFields()})};
 $("b-RISEN").onclick=function(){setTab("b","RISEN",function(k){bcur=k;renderFields()})};
@@ -237,7 +237,7 @@ var Q=[
 function renderQ(){var z=$("qz");z.textContent="";Q.forEach(function(q,i){var c=el("div","card");c.appendChild(el("h3",null,(i+1)+". "+q.q));var fb=el("p","fb");fb.setAttribute("role","status");
 q.o.forEach(function(t,j){var b=el("button","opt",t);b.type="button";b.onclick=function(){if(c.dataset.done)return;c.dataset.done=1;an++;
 if(j===q.a){sc++;b.classList.add("ok");fb.textContent="Corect. "+q.e}else{b.classList.add("no");c.querySelectorAll(".opt")[q.a].classList.add("ok");fb.textContent="Nu chiar. "+q.e}
-$("qs").textContent=an===Q.length?"Scor final: "+sc+" din "+Q.length+(sc===Q.length?". Felicitări!":". Reciti secțiunile de mai sus și încearcă din nou."):"Răspunsuri: "+an+" din "+Q.length}
+$("qs").textContent=an===Q.length?"Scor final: "+sc+" din "+Q.length+(sc===Q.length?". Felicitări!":". Recitește secțiunile de mai sus și încearcă din nou."):"Răspunsuri: "+an+" din "+Q.length}
 ;c.appendChild(b)});c.appendChild(fb);z.appendChild(c)});
 var r=el("button",null,"Reia quiz-ul");r.type="button";r.onclick=function(){sc=0;an=0;$("qs").textContent="";renderQ()};z.appendChild(r)}
 (function(){var ls=document.querySelectorAll("nav a"),ss=[].map.call(ls,function(a){return $(a.getAttribute("href").slice(1))});
@@ -261,7 +261,7 @@ var n=nrm(t),ok=0,miss=[],ul=el("ul","res"),w=t.trim().split(/\s+/).length,y=[];
 VC.forEach(function(c,i){var h=c[1].test(n);y[i]=h;if(h)ok++;else miss.push(c[0]);var li=el("li",h?"y":"");li.appendChild(el("b","ui",(h?"✓ ":"✗ ")+c[0]+(h?" · detectat":" · lipsește")));if(!h)li.appendChild(el("p","hint",c[2]));ul.appendChild(li)});
 r.appendChild(el("h3",null,"Scor: "+ok+" din "+VC.length));
 r.appendChild(el("p",null,ok===VC.length?"Prompt complet, la nivel RISEN.":(y[0]&&y[1]&&y[3])?"Ai un RTF complet (rol, sarcină, format). Pentru sarcini sensibile, adaugă și: "+miss.join(", ")+".":"Mai lucrează la: "+miss.join(", ")+"."));
-if(w<12)r.appendChild(el("p","hint","Promptul are doar "+w+" cuvinte. De obicei, mai multe detalii dau răspunsuri mai bune."));
+if(w<12)r.appendChild(el("p","hint","Promptul are doar "+w+(w===1?" cuvânt":" cuvinte")+". De obicei, mai multe detalii dau răspunsuri mai bune."));
 r.appendChild(ul);var s=scan(t);if(s.c.length){var wn=el("div","warn");wn.appendChild(el("b","ui","Atenție, posibile date personale ("+s.c.join(", ")+"). "));wn.appendChild(document.createTextNode("Anonimizează înainte să trimiți textul unui AI. Vezi secțiunea pentru profesioniști."));r.appendChild(wn)}
 r.appendChild(el("p","hint","Verificarea e orientativă: caută cuvinte-cheie, nu evaluează calitatea ideilor."))}
 $("vb").onclick=vf;$("vw").onclick=function(){$("vt").value="Spune-mi despre anxietate.";vf()};
@@ -270,7 +270,7 @@ var CK=["Am eliminat numele, prenumele și poreclele (client, familie, colegi)."
 function ckp(){var n=document.querySelectorAll("#ck input:checked").length;$("ckp").textContent=n===CK.length?"Toate cele "+CK.length+" verificări sunt bifate.":n+" din "+CK.length+" bifate."}
 CK.forEach(function(t){var l=el("label","ck"),c=document.createElement("input");c.type="checkbox";c.onchange=ckp;l.appendChild(c);l.appendChild(el("span",null,t));$("ck").appendChild(l)});
 $("ckr").onclick=function(){document.querySelectorAll("#ck input").forEach(function(c){c.checked=false});ckp()};
-$("ps").onclick=function(){var t=$("pt").value;if(!t.trim()){$("pf").textContent="Lipește mai întâi un text.";return}var s=scan(t);$("po").textContent=s.o;$("pst").textContent="";$("pf").textContent=cand(s.o)+(s.c.length?"Găsit și mascat: "+s.c.join("; ")+". Recitește textul, detectorul nu prinde totul.":"Nu am găsit tipare evidente. Recitește totuși manual: povești, locuri și detalii rare pot identifica o persoană.")};
+$("ps").onclick=function(){var t=$("pt").value;if(!t.trim()){$("pf").textContent="Lipește mai întâi un text.";return}var s=scan(t);$("po").textContent=s.o;$("pst").textContent="";$("pf").textContent=cand(s.o)+(s.c.length?"Găsit și mascat: "+s.c.join("; ")+". Recitește textul: detectorul nu prinde totul.":"Nu am găsit tipare evidente. Recitește totuși manual: povești, locuri și detalii rare pot identifica o persoană.")};
 $("pc").onclick=function(){cpy("po","pst")};$("tc").onclick=function(){cpy("tp","tst")};
 renderFW("RTF");renderFields();renderQ();
 </script>
