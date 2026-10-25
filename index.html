@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PsyAI Prompt Engineering</title>
+<style>
+:root{--bg:#f6f8f7;--sf:#fff;--tx:#17262b;--mu:#566a70;--ac:#0f6e6e;--ac2:#e8f3f2;--bd:#d5e0de;--r:#b4472f;--i:#2f5fa8;--s:#6a4aa0;--ok:#1f7a4d;--bad:#b3261e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a1c;--sf:#16262a;--tx:#e6f0ee;--mu:#9bb1b3;--ac:#5cc4bd;--ac2:#173a3a;--bd:#2a4246;--r:#f0997f;--i:#8db3ee;--s:#bda2ec;--ok:#6ad39b;--bad:#ff8f86}}
+:root[data-theme="dark"]{--bg:#0f1a1c;--sf:#16262a;--tx:#e6f0ee;--mu:#9bb1b3;--ac:#5cc4bd;--ac2:#173a3a;--bd:#2a4246;--r:#f0997f;--i:#8db3ee;--s:#bda2ec;--ok:#6ad39b;--bad:#ff8f86}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:calc(64px + env(safe-area-inset-top,0px))}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.65 Georgia,"Times New Roman",serif}
+h1,h2,h3,nav,button,label,.ui{font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:0 18px 60px}
+header.hero{padding:44px 18px 28px;max-width:860px;margin:0 auto}
+h1{font-size:clamp(2rem,6vw,3.2rem);line-height:1.1;margin:0 0 14px;letter-spacing:-.02em}
+.lead{font-size:1.15rem;color:var(--mu);max-width:60ch;margin:0 0 18px}
+h2{font-size:1.6rem;margin:0 0 8px;line-height:1.2}
+h3{font-size:1.1rem;margin:0 0 6px}
+section{padding:38px 0 6px;border-top:1px solid var(--bd)}
+p{margin:0 0 12px;max-width:68ch}
+nav{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--bd);padding-top:env(safe-area-inset-top,0px)}
+nav .in{max-width:860px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:8px 14px;align-items:center}
+nav a{white-space:nowrap;padding:8px 12px;border-radius:999px;color:var(--tx);text-decoration:none;font-size:.92rem;min-height:40px;display:inline-flex;align-items:center}
+nav a:hover,nav a.on{background:var(--ac2);color:var(--ac)}
+a:focus-visible,button:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+button{font-size:.98rem;min-height:44px;padding:8px 16px;border-radius:10px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);cursor:pointer}
+button.p{background:var(--ac);color:var(--bg);border-color:var(--ac);font-weight:700}
+button[aria-selected="true"],button.on{background:var(--ac2);border-color:var(--ac);color:var(--ac);font-weight:700}
+.tabs{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:16px 18px;margin:12px 0}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.grid .card{margin:0}
+.k{border-left:6px solid var(--c,var(--ac))}
+.k b.t{color:var(--c);font-family:"Trebuchet MS",system-ui,sans-serif}
+.k .ex{margin:6px 0 0;font-size:.97rem}
+.hl{padding:1px 4px;border-radius:4px;background:var(--ac2)}
+.bad{border-left:6px solid var(--bad)}.good{border-left:6px solid var(--ok)}
+.bad h3{color:var(--bad)}.good h3{color:var(--ok)}
+textarea{width:100%;min-height:92px;font:16px/1.5 Georgia,serif;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);resize:vertical}
+label{display:block;font-weight:700;margin:12px 0 4px}
+.hint{font-size:.88rem;color:var(--mu);font-weight:400;font-family:Georgia,serif}
+pre{white-space:pre-wrap;word-wrap:break-word;background:var(--bg);border:1px dashed var(--ac);border-radius:10px;padding:14px;font:15px/1.55 ui-monospace,Menlo,Consolas,monospace;margin:10px 0;min-height:80px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.meter{height:8px;border-radius:8px;background:var(--bd);overflow:hidden;margin:8px 0}
+.meter i{display:block;height:100%;background:var(--ac);width:0;transition:width .3s}
+details{background:var(--sf);border:1px solid var(--bd);border-radius:12px;margin:8px 0;padding:2px 16px}
+summary{cursor:pointer;font:700 1rem "Trebuchet MS",system-ui,sans-serif;padding:12px 0;min-height:44px}
+.opt{display:block;width:100%;text-align:left;margin:6px 0}
+.opt.ok{border-color:var(--ok);background:var(--ac2)}.opt.no{border-color:var(--bad)}
+.fb{font-size:.95rem;margin:6px 0 0;color:var(--mu)}
+.warn{border-left:6px solid var(--r);background:var(--sf);border-radius:12px;padding:14px 18px;margin:12px 0}
+.ck{display:flex;gap:10px;align-items:flex-start;font-weight:400;margin:0;padding:10px 0;border-bottom:1px solid var(--bd);min-height:44px;cursor:pointer}.ck input{width:22px;height:22px;margin-top:3px;flex:none;accent-color:var(--ac)}.res{list-style:none;padding:0;margin:10px 0}.res li{padding:8px 0 8px 12px;border-left:5px solid var(--bad);margin:6px 0;background:var(--bg);border-radius:8px}.res li.y{border-color:var(--ok)}.res p{margin:2px 0 0}
+footer{max-width:860px;margin:0 auto;padding:24px 18px 40px;color:var(--mu);font-size:.9rem;border-top:1px solid var(--bd)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.meter i{transition:none}}
+</style>
+</head>
+<body>
+<nav aria-label="Navigare"><div class="in">
+<a href="#ce-este">Ce este</a><a href="#cadre">Cadre</a><a href="#construieste">Construiește</a><a href="#verificator">Verificator</a><a href="#inainte-dupa">Înainte / după</a><a href="#reguli">Reguli</a><a href="#quiz">Quiz</a><a href="#profesionisti">Profesioniști</a><a href="#siguranta">Siguranță</a>
+</div></nav>
+
+<header class="hero">
+<h1>PsyAI Prompt Engineering</h1>
+<p class="lead">Învață să ceri bine unui AI, ca să primești răspunsuri mai clare, mai utile și mai sigure. Pornim de la două cadre simple, RTF și RISEN, și le exersezi pe loc.</p>
+<a href="#construieste"><button class="p" type="button">Sar direct la exercițiu</button></a>
+</header>
+
+<main>
+<section id="ce-este">
+<h2>Ce este prompt engineering?</h2>
+<p>Un <b>prompt</b> este mesajul pe care îl scrii unui AI. <b>Prompt engineering</b> înseamnă să îl formulezi astfel încât AI-ul să înțeleagă cine să fie, ce să facă și cum să-ți răspundă. AI-ul nu îți citește gândurile: răspunde la ce scrii, nu la ce ai vrut să scrii.</p>
+<div class="grid">
+<div class="card"><h3>Context</h3><p>Cu cât știe mai bine situația, cu atât răspunsul e mai potrivit.</p></div>
+<div class="card"><h3>Claritate</h3><p>O sarcină precisă dă un rezultat precis. „Ajută-mă” nu este o sarcină.</p></div>
+<div class="card"><h3>Structură</h3><p>Un cadru (RTF, RISEN) te ajută să nu uiți ce contează.</p></div>
+<div class="card"><h3>Iterație</h3><p>Primul răspuns e o ciornă. Rafinează cu mesaje de urmărire.</p></div>
+</div>
+</section>
+
+<section id="cadre">
+<h2>Două cadre, ca să începi</h2>
+<p>Alege un cadru, apoi atinge fiecare literă ca să vezi exemplul psihologic.</p>
+<div class="tabs" role="tablist" aria-label="Cadre">
+<button role="tab" id="t-RTF" aria-selected="true" type="button">RTF · rapid</button>
+<button role="tab" id="t-RISEN" aria-selected="false" type="button">RISEN · detaliat</button>
+</div>
+<div id="fwView" role="tabpanel" aria-live="polite"></div>
+</section>
+
+<section id="construieste">
+<h2>Construiește-ți propriul prompt</h2>
+<p>Completează câmpurile. Promptul se asamblează singur, iar tu îl copiezi în ChatGPT, Claude sau alt asistent.</p>
+<div class="tabs" role="tablist" aria-label="Cadru pentru constructor">
+<button role="tab" id="b-RTF" aria-selected="true" type="button">RTF</button>
+<button role="tab" id="b-RISEN" aria-selected="false" type="button">RISEN</button>
+</div>
+<div class="card">
+<div id="fields"></div>
+<div class="row" style="margin-top:14px">
+<button type="button" id="ldEx">Încarcă exemplul</button>
+<button type="button" id="clr">Golește</button>
+</div>
+</div>
+<div class="card">
+<h3>Calitatea promptului</h3>
+<div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="mt"><i id="mb"></i></div>
+<p class="hint" id="mtx">Completează câmpurile ca să vezi scorul.</p>
+<h3>Promptul tău</h3>
+<pre id="out" aria-live="polite">Promptul apare aici.</pre>
+<div class="row"><button type="button" class="p" id="cp">Copiază promptul</button><span id="cps" class="hint" role="status"></span></div>
+</div>
+</section>
+
+<section id="verificator">
+<h2>Verificator de prompt</h2>
+<p>Lipește un prompt scris liber. Verificatorul caută cele 7 elemente din cadrele RTF și RISEN și îți spune ce lipsește. Este orientativ: caută cuvinte-cheie, nu înțelege sensul.</p>
+<div class="card"><label for="vt">Promptul tău</label><textarea id="vt" style="min-height:120px" placeholder="Lipește promptul aici..."></textarea><div class="row" style="margin-top:12px"><button type="button" class="p" id="vb">Verifică promptul</button><button type="button" id="vw">Exemplu slab</button><button type="button" id="vg">Exemplu bun</button></div></div>
+<div id="vr" class="card" aria-live="polite" hidden></div>
+</section>
+
+<section id="inainte-dupa">
+<h2>Înainte și după</h2>
+<div class="grid">
+<div class="card bad"><h3>Prompt slab</h3><p>„Spune-mi despre anxietate.”</p><p class="hint">Fără rol, fără public, fără format. Primești un text generic, de enciclopedie.</p></div>
+<div class="card good"><h3>Prompt bun</h3><p>„Acționează ca un psihoterapeut CBT. Creează un material psihoeducațional despre îngrijorarea excesivă pentru un adult. Scrie în română, simplu, cu trei tehnici și câte un exercițiu.”</p><p class="hint">Rol, sarcină și format clare. Rezultatul e direct util.</p></div>
+</div>
+</section>
+
+<section id="reguli">
+<h2>Reguli de aur</h2>
+<details open><summary>1. Spune-i rolul</summary><p>Rolul schimbă tonul și nivelul de detaliu. „Psiholog clinician” răspunde altfel decât „prieten”.</p></details>
+<details><summary>2. Formulează o singură sarcină clară</summary><p>Verbe concrete: creează, compară, rezumă, listează. Evită „vorbește despre”.</p></details>
+<details><summary>3. Precizează publicul și limba</summary><p>„Pentru un adult fără studii de psihologie, în română” schimbă tot vocabularul.</p></details>
+<details><summary>4. Cere formatul exact</summary><p>Tabel, listă, număr de puncte, lungime, exerciții, ton. Ce nu ceri, nu primești.</p></details>
+<details><summary>5. Pune limite</summary><p>Spune ce să nu facă: să nu inventeze date, să nu pună diagnostice, să marcheze ce nu știe. Asta e rolul literei N din RISEN.</p></details>
+<details><summary>6. Iterează</summary><p>Urmărește cu: „Simplifică”, „Dă un exemplu”, „Scurtează la jumătate”, „Ce ipoteze ai făcut?”.</p></details>
+<details><summary>7. Verifică ce primești</summary><p>AI-ul poate greși convingător. Verifică faptele importante în surse de încredere.</p></details>
+</section>
+
+<section id="quiz">
+<h2>Testează-te</h2>
+<p id="qs" class="hint"></p>
+<div id="qz"></div>
+</section>
+
+<section id="profesionisti">
+<h2>Mod pentru profesioniști</h2>
+<p>Pentru psihologi, psihoterapeuți și supervizori care folosesc AI pe materiale clinice. Regula de bază: în AI intră doar text anonimizat. Respectă și codul deontologic al profesiei, politicile instituției și legislația privind datele personale.</p>
+<h3>1. Checklist de anonimizare</h3>
+<div class="card"><div id="ck"></div><div class="row" style="margin-top:12px"><button type="button" id="ckr">Resetează bifele</button><span class="hint" id="ckp" role="status">0 din 8 bifate.</span></div></div>
+<h3>2. Detector și mascare de date personale</h3>
+<p>Lipește textul și detectorul înlocuiește tiparele evidente (CNP, e-mail, telefon, date, adrese, nume după „domnul”, „clientul” etc.). Nu prinde poveștile recognoscibile, deci recitește mereu manual.</p>
+<div class="card"><label for="pt">Text de verificat</label><textarea id="pt" style="min-height:120px" placeholder="Lipește descrierea cazului..."></textarea><div class="row" style="margin-top:12px"><button type="button" class="p" id="ps">Scanează și maschează</button><button type="button" id="pc">Copiază textul mascat</button><span class="hint" id="pst" role="status"></span></div><p class="hint" id="pf" style="margin-top:10px"></p><pre id="po" aria-live="polite"></pre></div>
+<details><summary>Limite cunoscute ale instrumentelor</summary>
+<p><b>Detectorul de date</b> nu prinde: nume fieără titlu înainte (le semnalează doar ca posibile, fără să le mascheze), porecle, serii de buletin, numere de dosar, precum și locuri sau evenimente care identifică o persoană prin context. Poate masca și lucruri nevinovate, de exemplu o abreviere precum „S.A.”. Recitește mereu textul.</p>
+<p><b>Verificatorul de prompt</b> caută cuvinte-cheie în română. Nu judecă calitatea ideilor, poate rata formulări neobișnuite și nu funcționează pentru alte limbi.</p>
+<p><b>Constructorul, checklistul și quiz-ul</b> nu salvează nimic: dacă reîncărci pagina, începi de la zero.</p>
+<p><b>Niciun instrument de aici</b> nu înlocuiește evaluarea ta profesională, politicile instituției sau legislația privind datele personale.</p></details>
+<h3>3. Șablon RISEN pentru supervizare</h3>
+<div class="card"><pre id="tp">ROL:
+Acționează ca un supervizor clinic cu experiență în [orientarea ta, ex. CBT].
+
+INSTRUCȚIUNI:
+Pe baza descrierii ANONIMIZATE de mai jos, propune ipoteze de conceptualizare. Separă clar faptele din text de ipoteze.
+
+PAȘI:
+1. Listează informațiile lipsă.
+2. Formulează ipoteze alternative de lucru.
+3. Propune obiective măsurabile.
+4. Sugerează instrumente de evaluare.
+5. Indică semnele pentru care e necesară o evaluare suplimentară sau o trimitere.
+
+REZULTAT FINAL:
+Un material de reflecție pentru ședința de supervizare.
+
+DELIMITĂRI:
+Nu inventa informații, nu formula un diagnostic și nu înlocui judecata clinică. Dacă informația e insuficientă, spune explicit.
+
+CAZ (anonimizat):
+[lipește aici textul mascat]</pre><div class="row"><button type="button" class="p" id="tc">Copiază șablonul</button><span class="hint" id="tst" role="status"></span></div></div>
+</section>
+
+<section id="siguranta">
+<h2>Siguranță și etică</h2>
+<div class="warn"><b class="ui">Nu introduce date personale.</b> Nume, diagnostice sau povești identificabile ale unor clienți nu se scriu într-un AI public. Descrie cazul anonim, în termeni generali.</div>
+<div class="warn"><b class="ui">AI-ul nu înlocuiește specialistul.</b> Un plan generat este o ciornă pentru reflecție. Judecata clinică și evaluarea reală rămân ale profesionistului. Dacă treci printr-o criză, contactează un specialist sau serviciul de urgență (112 în România).</div>
+</section>
+</main>
+<footer>© PsyAI · Material educațional. Nu constituie consult psihologic sau medical.</footer>
+
+<script>
+var FW={
+RTF:{name:"RTF",c:["var(--r)","var(--i)","var(--s)"],f:[
+{l:"Rol",d:"Cine să fie AI-ul?",ph:"Acționează ca un psihoterapeut cu experiență în terapia cognitiv-comportamentală.",ex:"Acționează ca un psihoterapeut cu experiență în terapia cognitiv-comportamentală.",w:"Dă expertiză și ton."},
+{l:"Sarcină",d:"Ce trebuie să facă?",ph:"Creează un material psihoeducațional despre gestionarea anxietății.",ex:"Creează un material psihoeducațional despre gestionarea anxietății, destinat unui adult care se confruntă cu îngrijorare excesivă.",w:"Verbul și publicul."},
+{l:"Format",d:"Cum arată răspunsul?",ph:"Scrie în română, cu limbaj accesibil.",ex:"Scrie în limba română, folosește un limbaj accesibil, explică trei tehnici practice și include câte un exercițiu pentru fiecare tehnică.",w:"Limbă, lungime, structură."}]},
+RISEN:{name:"RISEN",c:["var(--r)","var(--i)","var(--s)","var(--ok)","var(--bad)"],f:[
+{l:"Rol",d:"Cine să fie AI-ul?",ph:"Acționează ca un psiholog clinician...",ex:"Acționează ca un psiholog clinician și psihoterapeut cu experiență în intervenții bazate pe dovezi științifice.",w:"Expertiza dorită."},
+{l:"Instrucțiuni",d:"Ce trebuie să facă, exact?",ph:"Elaborează un plan orientativ...",ex:"Elaborează un plan orientativ de intervenție psihologică pentru un adult care prezintă simptome de anxietate. Diferențiază informațiile cunoscute de ipotezele care necesită verificare.",w:"Sarcina principală."},
+{l:"Pași",d:"Ce etape să urmeze?",ph:"1. ... 2. ...",ex:"1. Identifică informațiile clinice care lipsesc.\n2. Propune obiective terapeutice măsurabile.\n3. Sugerează tehnici potrivite obiectivelor.\n4. Descrie modalități de monitorizare a progresului.\n5. Indică situațiile în care e necesară o evaluare suplimentară.",w:"Ordinea gândirii."},
+{l:"Rezultat final",d:"Ce vrei să obții?",ph:"Un plan structurat...",ex:"Obține un plan structurat, care să poată fi adaptat ulterior în funcție de evaluarea clinică.",w:"Scopul, ca AI-ul să știe încotro merge."},
+{l:"Delimitări",d:"Ce NU are voie?",ph:"Nu inventa...",ex:"Nu inventa istoricul clientului, nu formula un diagnostic pe baza informațiilor insuficiente și nu prezenta planul ca substitut pentru judecata clinică a terapeutului.",w:"Limite și siguranță."}]}};
+var cur="RTF",bcur="RTF",vals={RTF:[],RISEN:[]};
+function $(i){return document.getElementById(i)}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function setTab(p,k,fn){["RTF","RISEN"].forEach(function(n){var b=$(p+"-"+n);b.setAttribute("aria-selected",n===k)});fn(k)}
+function renderFW(k){cur=k;var v=$("fwView");v.textContent="";var F=FW[k];
+v.appendChild(el("p","hint",k==="RTF"?"Rol – Sarcină – Format: perfect pentru cereri rapide.":"Rol – Instrucțiuni – Pași – Rezultat final – Delimitări: pentru sarcini complexe sau sensibile."));
+F.f.forEach(function(f,i){var c=el("div","card k");c.style.setProperty("--c",F.c[i]);
+c.appendChild(el("b","t",f.l+" · "+f.d));var p=el("p","ex",f.ex);p.style.whiteSpace="pre-line";c.appendChild(p);
+c.appendChild(el("p","hint","De ce contează: "+f.w));v.appendChild(c)})}
+function renderFields(){var k=bcur,box=$("fields");box.textContent="";
+FW[k].f.forEach(function(f,i){var id="f"+i;var lb=el("label",null,f.l+" ");lb.htmlFor=id;lb.appendChild(el("span","hint",f.d));
+var ta=document.createElement("textarea");ta.id=id;ta.placeholder=f.ph;ta.value=vals[k][i]||"";
+ta.addEventListener("input",function(){vals[k][i]=ta.value;upd()});box.appendChild(lb);box.appendChild(ta)});upd()}
+function upd(){var k=bcur,F=FW[k].f,parts=[],n=0,long=0;
+F.forEach(function(f,i){var v=(vals[k][i]||"").trim();if(v){n++;if(v.length>40)long++;parts.push(f.l.toUpperCase()+":\n"+v)}});
+$("out").textContent=parts.length?parts.join("\n\n"):"Promptul apare aici.";
+var sc=Math.round(((n+long)/(F.length*2))*100);$("mb").style.width=sc+"%";$("mt").setAttribute("aria-valuenow",sc);
+$("mtx").textContent=n===0?"Completează câmpurile ca să vezi scorul.":n<F.length?"Mai lipsesc "+(F.length-n)+" câmpuri. Un prompt complet dă răspunsuri mai bune.":long<F.length?"Toate câmpurile sunt completate. Adaugă detalii în cele scurte.":"Excelent. Promptul este complet și detaliat."}
+$("t-RTF").onclick=function(){setTab("t","RTF",renderFW)};$("t-RISEN").onclick=function(){setTab("t","RISEN",renderFW)};
+$("b-RTF").onclick=function(){setTab("b","RTF",function(k){bcur=k;renderFields()})};
+$("b-RISEN").onclick=function(){setTab("b","RISEN",function(k){bcur=k;renderFields()})};
+$("ldEx").onclick=function(){vals[bcur]=FW[bcur].f.map(function(f){return f.ex});renderFields()};
+$("clr").onclick=function(){vals[bcur]=[];renderFields()};
+$("cp").onclick=function(){var t=$("out").textContent,s=$("cps");if(t==="Promptul apare aici."){s.textContent="Completează mai întâi promptul.";return}
+function ok(){s.textContent="Copiat."}function fb(){var r=document.createRange();r.selectNodeContents($("out"));var S=getSelection();S.removeAllRanges();S.addRange(r);try{if(!document.execCommand("copy"))throw 0;ok()}catch(e){s.textContent="Selectează textul și copiază-l manual."}}
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb)}else fb()};
+var Q=[
+{q:"Care sunt literele din RTF?",o:["Rol, Task, Format","Regulă, Temă, Final","Răspuns, Test, Feedback"],a:0,e:"RTF = Role, Task, Format: cine, ce, cum."},
+{q:"Care prompt este mai bun?",o:["Spune-mi ceva despre stres.","Ca psiholog CBT, explică stresul unui adolescent în 5 puncte simple.","Stres?"],a:1,e:"Are rol, public și format clar."},
+{q:"La ce folosește litera N (Narrowing) din RISEN?",o:["Pune limite și interdicții","Face textul mai lung","Alege limba"],a:0,e:"Delimitările spun ce să nu facă: nu inventa, nu diagnostica."},
+{q:"Primul răspuns al AI-ului nu e potrivit. Ce faci?",o:["Renunți","Ceri ajustări: simplifică, dă exemple, schimbă tonul","Repeți exact același prompt"],a:1,e:"Iterația este parte din meserie."},
+{q:"Poți scrie într-un AI public numele și diagnosticul unui client?",o:["Da, dacă e util","Nu: anonimizează și generalizează","Doar prenumele"],a:1,e:"Confidențialitatea are prioritate."}],sc=0,an=0;
+function renderQ(){var z=$("qz");z.textContent="";Q.forEach(function(q,i){var c=el("div","card");c.appendChild(el("h3",null,(i+1)+". "+q.q));var fb=el("p","fb");fb.setAttribute("role","status");
+q.o.forEach(function(t,j){var b=el("button","opt",t);b.type="button";b.onclick=function(){if(c.dataset.done)return;c.dataset.done=1;an++;
+if(j===q.a){sc++;b.classList.add("ok");fb.textContent="Corect. "+q.e}else{b.classList.add("no");c.querySelectorAll(".opt")[q.a].classList.add("ok");fb.textContent="Nu chiar. "+q.e}
+$("qs").textContent=an===Q.length?"Scor final: "+sc+" din "+Q.length+(sc===Q.length?". Felicitări!":". Reciti secțiunile de mai sus și încearcă din nou."):"Răspunsuri: "+an+" din "+Q.length}
+;c.appendChild(b)});c.appendChild(fb);z.appendChild(c)});
+var r=el("button",null,"Reia quiz-ul");r.type="button";r.onclick=function(){sc=0;an=0;$("qs").textContent="";renderQ()};z.appendChild(r)}
+(function(){var ls=document.querySelectorAll("nav a"),ss=[].map.call(ls,function(a){return $(a.getAttribute("href").slice(1))});
+function sp(){var y=window.scrollY+120,cu=-1;ss.forEach(function(s,i){if(s&&s.offsetTop<=y)cu=i});ls.forEach(function(a,i){a.classList.toggle("on",i===cu)})}
+window.addEventListener("scroll",sp,{passive:true});sp()})();
+function nrm(t){return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
+var PII=[["CNP",/\b[1-8]\d{12}\b/g,"[CNP]"],["e-mail",/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g,"[EMAIL]"],["dată",/\b\d{1,2}[.\/-]\d{1,2}[.\/-](?:19|20)?\d{2}\b/g,"[DATĂ]"],["telefon",/(?:\+40|\b0040|\b0)[\s.-]?\d{2,3}(?:[\s.-]?\d{3}){2}/g,"[TELEFON]"],["adresă",/(?:[Ss]tr\.?|[Ss]trada|[Bb]d\.?|[Bb]ulevardul|[Cc]alea|[Aa]leea)\s+[A-ZĂÂÎȘȚ][^\s,.;]*(?:\s+(?:nr\.?\s*)?\d+\w*)?/g,"[ADRESĂ]"],["nume probabil",/\b((?:[Dd]omnul|[Dd]oamna|[Dd]l\.?|[Dd]na\.?|[Cc]lientul|[Cc]lienta|[Pp]acientul|[Pp]acienta)\s+)[A-ZĂÂÎȘȚ][a-zăâîșț]+(?:\s+[A-ZĂÂÎȘȚ][a-zăâîșț]+)?/g,function(m,a){return a+"[NUME]"}],["inițiale",/\b[A-ZĂÂÎȘȚ]\.\s?[A-ZĂÂÎȘȚ]\.(?:\s?[A-ZĂÂÎȘȚ]\.)?/g,"[INIȚIALE]"],["IBAN",/\bRO\d{2}[A-Z]{4}[A-Z0-9]{16}\b/g,"[IBAN]"]];
+function cand(o){var m=[],re=/(?:^|[^.!?\n]\s)([A-ZĂÂÎȘȚ][a-zăâîșț]{2,}\s+[A-ZĂÂÎȘȚ][a-zăâîșț]{2,})/g,x;while((x=re.exec(o))){if(m.indexOf(x[1])<0)m.push(x[1])}return m.length?"Posibile nume rămase nemascate (verifică): "+m.join(", ")+". ":""}
+function scan(t){var c=[],o=t;PII.forEach(function(r){var n=0;o=o.replace(r[1],function(){n++;return typeof r[2]==="function"?r[2].apply(null,arguments):r[2]});if(n)c.push(r[0]+": "+n)});return{c:c,o:o}}
+function cpy(src,st){var t=$(src).textContent,s=$(st);if(!t.trim()){s.textContent="Nimic de copiat.";return}function ok(){s.textContent="Copiat."}function fb(){var r=document.createRange();r.selectNodeContents($(src));var S=getSelection();S.removeAllRanges();S.addRange(r);try{if(!document.execCommand("copy"))throw 0;ok()}catch(e){s.textContent="Selectează textul și copiază-l manual."}}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb)}else fb()}
+var VC=[
+["Rol",/\b(actioneaza|comporta-te|joaca rolul|rolul de|in rol de|esti (un|o) |prezinta-te ca|ca (un|o) (psiholog|psihoterapeut|terapeut|expert|specialist|medic|profesor|coach|supervizor|clinician|consultant|trainer|formator|cercetator))/,"Spune cine să fie AI-ul, ex. „Acționează ca un psiholog clinician...”"],
+["Sarcină",/\b(creeaza|scrie|explica|elaboreaza|compara|rezuma|listeaza|propune|genereaza|analiza|descrie|redacteaza|planifica|construieste|identifica|sugereaza|ofera|da-mi|fa-mi|pregateste|evalueaza|traduce|reformuleaza|simplifica)/,"Folosește un verb concret: creează, compară, rezumă, elaborează."],
+["Public",/\b(pentru (un|o|niste|persoane|adulti|adolescenti|parinti|clienti|studenti|pacienti|copii)|destinat|adresat|publicul|cititor)/,"Spune cui se adresează: „pentru un adult fără studii de psihologie”."],
+["Format",/\b(format|tabel|lista|puncte|exercitii|exemple|paragraf|cuvinte|pagina|scurt|detaliat|ton |limba|in romana|in engleza|structura|titluri|sectiuni|maxim|minim)/,"Cere forma răspunsului: limbă, lungime, listă sau tabel, număr de exemple."],
+["Pași",/((\n|^)\s*(\d+[.)]|[-*•])\s|pas cu pas|pasii|etape)/,"Pentru sarcini complexe, enumeră pașii pe care să îi urmeze (1., 2., 3.)."],
+["Rezultat final",/\b(scop|obiectiv|rezultat|astfel incat|ca sa pot|pentru a obtine|vreau sa obtin|obtine)/,"Spune ce vrei să obții la final și cum vei folosi răspunsul."],
+["Delimitări",/\b(nu inventa|nu formula|nu pune|nu folosi|nu presupune|nu da |nu prezenta|nu face|evita|fara |sa nu |nu include|daca nu esti sigur|nu stii)/,"Pune limite: „nu inventa date”, „nu pune diagnostic”, „spune ce nu știi”."]];
+function vf(){var t=$("vt").value,r=$("vr");r.textContent="";r.hidden=false;if(t.trim().length<3){r.appendChild(el("p","hint","Scrie sau lipește un prompt, apoi apasă Verifică."));return}
+var n=nrm(t),ok=0,miss=[],ul=el("ul","res"),w=t.trim().split(/\s+/).length,y=[];
+VC.forEach(function(c,i){var h=c[1].test(n);y[i]=h;if(h)ok++;else miss.push(c[0]);var li=el("li",h?"y":"");li.appendChild(el("b","ui",(h?"✓ ":"✗ ")+c[0]+(h?" · detectat":" · lipsește")));if(!h)li.appendChild(el("p","hint",c[2]));ul.appendChild(li)});
+r.appendChild(el("h3",null,"Scor: "+ok+" din "+VC.length));
+r.appendChild(el("p",null,ok===VC.length?"Prompt complet, la nivel RISEN.":(y[0]&&y[1]&&y[3])?"Ai un RTF complet (rol, sarcină, format). Pentru sarcini sensibile, adaugă și: "+miss.join(", ")+".":"Mai lucrează la: "+miss.join(", ")+"."));
+if(w<12)r.appendChild(el("p","hint","Promptul are doar "+w+" cuvinte. De obicei, mai multe detalii dau răspunsuri mai bune."));
+r.appendChild(ul);var s=scan(t);if(s.c.length){var wn=el("div","warn");wn.appendChild(el("b","ui","Atenție, posibile date personale ("+s.c.join(", ")+"). "));wn.appendChild(document.createTextNode("Anonimizează înainte să trimiți textul unui AI. Vezi secțiunea pentru profesioniști."));r.appendChild(wn)}
+r.appendChild(el("p","hint","Verificarea e orientativă: caută cuvinte-cheie, nu evaluează calitatea ideilor."))}
+$("vb").onclick=vf;$("vw").onclick=function(){$("vt").value="Spune-mi despre anxietate.";vf()};
+$("vg").onclick=function(){$("vt").value=FW.RTF.f.map(function(f){return f.ex}).join(" ");vf()};
+var CK=["Am eliminat numele, prenumele și poreclele (client, familie, colegi).","Am înlocuit locațiile precise (localitate mică, școală, angajator) cu termeni generali.","Am generalizat vârsta (ex. „adult tânăr”) și datele (ex. „acum 6 luni”).","Am scos contactele și identificatorii: telefon, e-mail, CNP, număr de dosar.","Am schimbat detaliile rare sau recognoscibile (profesie neobișnuită, evenimente apărute în presă).","Am păstrat doar ce este necesar pentru întrebare (minimizarea datelor).","Am verificat setările de confidențialitate ale instrumentului AI, politica instituției și cadrul legal aplicabil.","Voi verifica și corecta răspunsul AI. Decizia clinică rămâne a mea."];
+function ckp(){var n=document.querySelectorAll("#ck input:checked").length;$("ckp").textContent=n===CK.length?"Toate cele "+CK.length+" verificări sunt bifate.":n+" din "+CK.length+" bifate."}
+CK.forEach(function(t){var l=el("label","ck"),c=document.createElement("input");c.type="checkbox";c.onchange=ckp;l.appendChild(c);l.appendChild(el("span",null,t));$("ck").appendChild(l)});
+$("ckr").onclick=function(){document.querySelectorAll("#ck input").forEach(function(c){c.checked=false});ckp()};
+$("ps").onclick=function(){var t=$("pt").value;if(!t.trim()){$("pf").textContent="Lipește mai întâi un text.";return}var s=scan(t);$("po").textContent=s.o;$("pst").textContent="";$("pf").textContent=cand(s.o)+(s.c.length?"Găsit și mascat: "+s.c.join("; ")+". Recitește textul, detectorul nu prinde totul.":"Nu am găsit tipare evidente. Recitește totuși manual: povești, locuri și detalii rare pot identifica o persoană.")};
+$("pc").onclick=function(){cpy("po","pst")};$("tc").onclick=function(){cpy("tp","tst")};
+renderFW("RTF");renderFields();renderQ();
+</script>
+</body>
+</html>
